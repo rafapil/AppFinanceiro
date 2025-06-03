@@ -1,18 +1,8 @@
-// necessário add essa configuracao
-//buildscript {
-//    dependencies {
-//        classpath("com.dynatrace.tools.android:gradle-plugin:8.+")
-//    }
-//}
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    id("kotlin-parcelize")
 
-    // adicionar estas configuracoes
-//    id("com.android.application") version "8.1.0" apply false
-//    id("com.android.library") version "8.1.0" apply false
+    id("kotlin-parcelize")
 }
 
 android {
@@ -38,10 +28,12 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -63,6 +55,7 @@ dependencies {
     implementation(libs.circularprogressbar)
     implementation(libs.glide)
 
+    // incluir essa dependencia para o oneAgent funcionar
     implementation("com.dynatrace.agent:agent-android:8.+")
 
 }
