@@ -120,7 +120,7 @@ object DynatraceLogger {
     }
 
     private fun salvarLogLocal(log: DynatraceLog) {
-        println("💾 Fallback: salvando log local -> $log")
+        println("Fallback: salvando log local -> $log")
         // Aqui você pode salvar no SharedPreferences, SQLite, Room, arquivo etc.
     }
 }
