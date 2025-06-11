@@ -10,6 +10,7 @@ import com.dynatrace.android.agent.Dynatrace
 import com.projetos.appfinanceiro.Adapter.ExpenseListAdapter
 import com.projetos.appfinanceiro.ViewModel.MainViewModel
 import com.projetos.appfinanceiro.databinding.ActivityMainBinding
+import com.projetos.appfinanceiro.telemetry.DynatraceLogger
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -25,7 +26,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.debtorBtn.setOnClickListener {
-            sendDataDynatrace()
+//            sendDataDynatrace()
+            sendDataLog()
         }
 
         initRecyclerView()
@@ -48,6 +50,15 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.expenseList.observe(this, Observer { items ->
             binding.view1.adapter = ExpenseListAdapter(items)
         })
+    }
+
+    private fun sendDataLog() {
+        DynatraceLogger.log(
+            content = "Erro no processamento do pagamento",
+            status = "error",
+            serviceName = "pagamentos-app",
+            namespace = "prod"
+        )
     }
 
     private fun sendDataDynatrace() {
