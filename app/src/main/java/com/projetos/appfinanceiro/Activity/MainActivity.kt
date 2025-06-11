@@ -28,10 +28,6 @@ class MainActivity : AppCompatActivity() {
             sendDataDynatrace()
         }
 
-        binding.addCardBtn.setOnClickListener {
-            sendEventToDynatrace()
-        }
-
         initRecyclerView()
         setVariable()
         observeData()
@@ -54,13 +50,6 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    // aqui é enviado um evento para o Dynatrace
-    private fun sendEventToDynatrace() {
-        val action = Dynatrace.enterAction("Start App")
-        action.reportEvent("Foi realizado o login na aplicação")
-    }
-
-    // função estatica para enviar eventos do tipo Business Event para o Dynatrace
     private fun sendDataDynatrace() {
         try {
             JSONObject().apply {

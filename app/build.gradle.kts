@@ -40,6 +40,7 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    ndkVersion = "27.2.12479018"
 }
 
 dependencies {
@@ -56,6 +57,19 @@ dependencies {
     implementation(libs.glide)
 
     // incluir essa dependencia para o oneAgent funcionar
-    implementation("com.dynatrace.agent:agent-android:8.+")
+    implementation("com.dynatrace.agent:agent-android:8.315.1.1005")
+
+    // Dependencias para openTelemetry
+    implementation("io.opentelemetry:opentelemetry-api-logs:1.26.0-alpha")
+    implementation("io.opentelemetry:opentelemetry-sdk-logs:1.26.0-alpha")
+//    implementation("io.opentelemetry:opentelemetry-sdk-logs:1.51.0")
+    implementation("io.opentelemetry:opentelemetry-exporter-otlp-logs:1.26.0-alpha")
+
+    //    // If you specifically need gRPC and its dependencies:
+    implementation ("io.grpc:grpc-okhttp:1.59.0") // Or latest, check compatibility
+    implementation ("io.grpc:grpc-protobuf-lite:1.59.0")
+    implementation ("io.grpc:grpc-stub:1.59.0")
+
+
 
 }
