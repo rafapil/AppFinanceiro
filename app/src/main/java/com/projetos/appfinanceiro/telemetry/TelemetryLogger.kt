@@ -31,7 +31,7 @@ object TelemetryLogger {
     private val sdkLoggerProvider: SdkLoggerProvider by lazy {
         val exporter = OtlpGrpcLogRecordExporter.builder()
             .setEndpoint("https://phr27629.live.dynatrace.com/api/v2/otlp/v1/logs") // ajuste para seu collector OTLP
-            .addHeader("Authorization"," Api-Token dt0c01.N2LVKO6DB6FV6PVQ4DIRHWBG.VSTJ6STNJ4MB2QIFMUUFUWUQGVVARBD4XLKE6HBKC6PFQWJFV6PUVTPT43QDTZWD")
+//            .addHeader("Authorization"," Api-Token token")
             .setTimeout(10, TimeUnit.SECONDS)
             .build()
 
