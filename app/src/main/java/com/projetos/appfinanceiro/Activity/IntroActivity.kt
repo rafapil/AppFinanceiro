@@ -1,11 +1,11 @@
 package com.projetos.appfinanceiro.Activity
 
-import android.content.Intent 
+import android.content.Intent
 import android.os.Bundle 
 import androidx.appcompat.app.AppCompatActivity
-import com.dynatrace.android.agent.Dynatrace
-import com.dynatrace.android.agent.conf.DynatraceConfigurationBuilder
-import com.projetos.appfinanceiro.databinding.ActivityIntroBinding 
+import com.projetos.appfinanceiro.databinding.ActivityIntroBinding
+import com.projetos.appfinanceiro.integration.dynatrace.DynatraceConfigRUM
+
 
 class IntroActivity : AppCompatActivity() {
 
@@ -13,12 +13,7 @@ class IntroActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // esse ponto configura o oneAgent manualmente
-        Dynatrace.startup(this, DynatraceConfigurationBuilder("<apllicationId>", "<url de comunicação com a API do Dynatrace>")
-            // configuracoes adicionais
-            .withCrashReporting(true)
-            .buildConfiguration())
+        DynatraceConfigRUM.initialize(application)
 
         binding = ActivityIntroBinding.inflate(layoutInflater)
         setContentView(binding.root)

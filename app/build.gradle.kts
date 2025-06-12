@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
 
     id("kotlin-parcelize")
+
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0"
 }
 
 android {
@@ -40,6 +42,7 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    ndkVersion = "27.2.12479018"
 }
 
 dependencies {
@@ -55,7 +58,11 @@ dependencies {
     implementation(libs.circularprogressbar)
     implementation(libs.glide)
 
-    // incluir essa dependencia para o oneAgent funcionar
-    implementation("com.dynatrace.agent:agent-android:8.+")
+    implementation(libs.okhttp)
+    implementation(libs.kotlinx.coroutines)
+    implementation(libs.lifecycle.runtime)
+    implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.dynatrace.agent)
 
 }

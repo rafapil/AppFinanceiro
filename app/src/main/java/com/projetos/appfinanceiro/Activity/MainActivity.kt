@@ -10,6 +10,12 @@ import com.dynatrace.android.agent.Dynatrace
 import com.projetos.appfinanceiro.Adapter.ExpenseListAdapter
 import com.projetos.appfinanceiro.ViewModel.MainViewModel
 import com.projetos.appfinanceiro.databinding.ActivityMainBinding
+import com.projetos.appfinanceiro.integration.dynatrace.DynatraceLog
+import com.projetos.appfinanceiro.integration.dynatrace.DynatraceLogger
+import com.projetos.appfinanceiro.integration.dynatrace.ExtraInfo
+import com.projetos.appfinanceiro.logging.LogLevel
+import com.projetos.appfinanceiro.logging.LogType
+import com.projetos.appfinanceiro.logging.Namespace
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -25,11 +31,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.debtorBtn.setOnClickListener {
-            sendDataDynatrace()
+            sendDataLog()
         }
 
         binding.addCardBtn.setOnClickListener {
-            sendEventToDynatrace()
+            try {
+                throw IllegalStateException("Erro forçado para teste")
+            } catch (e: Exception) {
+                sendDataLogError(e)
+                Dynatrace.reportError("Falha ao carregar tela", e)
+            }
         }
 
         initRecyclerView()
@@ -54,13 +65,55 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    // aqui é enviado um evento para o Dynatrace
-    private fun sendEventToDynatrace() {
-        val action = Dynatrace.enterAction("Start App")
-        action.reportEvent("Foi realizado o login na aplicação")
+    private fun sendDataLog() {
+        DynatraceLogger.log(
+            DynatraceLog(
+                logType = LogType.TBS,
+                acronym = "xpto",
+                level = LogLevel.WARN,
+                serviceName = "AppFinanceiro",
+                namespace = Namespace.PRD,
+                operation = "MainActivity",
+                content = "Falha ao buscar saldo",
+                duration = 617,
+                value = 250.99,
+                extra = ExtraInfo(
+                    userId = "user-001",
+                    transactionId = "txn-987654",
+                    statusCode = 404,
+                    exception = "Error in application",
+                    errorMessage = "fail to connect",
+                    errorStack = listOf()
+                )
+            )
+        )
     }
 
-    // função estatica para enviar eventos do tipo Business Event para o Dynatrace
+    private fun sendDataLogError(error: Exception) {
+        val stackErrorString: List<String> = error.stackTrace.map { it.toString() }
+        DynatraceLogger.log(
+            DynatraceLog(
+                logType = LogType.TBS,
+                acronym = "xpto",
+                level = LogLevel.ERROR,
+                serviceName = "AppFinanceiro",
+                namespace = Namespace.PRD,
+                operation = "MainActivity",
+                content = "Falha ao buscar saldo",
+                duration = 617,
+                value = 250.99,
+                extra = ExtraInfo(
+                    userId = "user-001",
+                    transactionId = "txn-987654",
+                    statusCode = 404,
+                    exception = "Error in application",
+                    errorMessage = error.message,
+                    errorStack = stackErrorString
+                )
+            )
+        )
+    }
+
     private fun sendDataDynatrace() {
         try {
             JSONObject().apply {

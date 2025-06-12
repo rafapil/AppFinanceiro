@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">https://phr27629.live.dynatrace.com</domain> <!-- Replace with your collector's domain -->
+    </domain-config>
+    <!-- You might have other global or domain-specific configurations here -->
+</network-security-config>
