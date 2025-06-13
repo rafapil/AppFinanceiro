@@ -34,6 +34,10 @@ class MainActivity : AppCompatActivity() {
             sendDataLog()
         }
 
+        binding.getCashBtn.setOnClickListener {
+            sendDataDynatrace()
+        }
+
         binding.addCardBtn.setOnClickListener {
             try {
                 throw IllegalStateException("Erro forçado para teste")
