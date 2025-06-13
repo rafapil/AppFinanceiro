@@ -1,5 +1,6 @@
-package com.projetos.appfinanceiro.integration.dynatrace
+package com.projetos.appfinanceiro.integration.cielo
 
+import com.projetos.appfinanceiro.integration.config.NetworkingConstants
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -15,7 +16,7 @@ import kotlinx.coroutines.channels.Channel
 
 
 @Serializable
-data class DynatraceLogSerializable(
+data class LogSerializable(
     val logType: String,
     val acronym: String,
     val logLevel: String,
@@ -39,7 +40,7 @@ data class ExtraInfoDto(
 )
 
 
-object DynatraceLogger {
+object CieloLogExporter {
 
     private val client = OkHttpClient()
     private const val API_URL = NetworkingConstants.BASE_URL
@@ -47,7 +48,7 @@ object DynatraceLogger {
     private val json = Json { encodeDefaults = false; ignoreUnknownKeys = true }
 
     // Canal com buffer ilimitado (pode trocar por BUFFERED ou conflated)
-    private val logChannel = Channel<DynatraceLog>(Channel.UNLIMITED)
+    private val logChannel = Channel<CieloLog>(Channel.UNLIMITED)
 
     init {
         // Inicializa o consumo da fila assim que o app sobe
@@ -58,14 +59,14 @@ object DynatraceLogger {
         }
     }
 
-    fun log(log: DynatraceLog) {
+    fun log(log: CieloLog) {
         CoroutineScope(Dispatchers.IO).launch {
             logChannel.send(log)
         }
     }
 
-    private suspend fun sendLogWithRetry(log: DynatraceLog, tentativas: Int = 3) {
-        val logSerializable = DynatraceLogSerializable(
+    private suspend fun sendLogWithRetry(log: CieloLog, tentativas: Int = 3) {
+        val logSerializable = LogSerializable(
             logType = log.logType.name,
             acronym = log.acronym,
             logLevel = log.level.name,
@@ -111,15 +112,14 @@ object DynatraceLogger {
                 println("Tentativa ${tentativa + 1} falhou: ${e.localizedMessage}")
             }
 
-            // Aguarda um pouco antes da próxima tentativa
             kotlinx.coroutines.delay(1000L * (tentativa + 1))
         }
 
-        // Fallback final: salva localmente ou imprime (pode gravar em arquivo ou Room aqui)
+        // Fallback final
         salvarLogLocal(log)
     }
 
-    private fun salvarLogLocal(log: DynatraceLog) {
+    private fun salvarLogLocal(log: CieloLog) {
         println("Fallback: salvando log local -> $log")
         // Aqui você pode salvar no SharedPreferences, SQLite, Room, arquivo etc.
     }

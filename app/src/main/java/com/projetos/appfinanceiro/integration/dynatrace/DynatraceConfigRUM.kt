@@ -3,6 +3,7 @@ package com.projetos.appfinanceiro.integration.dynatrace
 import android.app.Application
 import com.dynatrace.android.agent.Dynatrace
 import com.dynatrace.android.agent.conf.DynatraceConfigurationBuilder
+import com.projetos.appfinanceiro.integration.config.NetworkingConstants
 import okhttp3.OkHttpClient
 
 object DynatraceConfigRUM {

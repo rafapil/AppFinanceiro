@@ -1,10 +1,10 @@
-package com.projetos.appfinanceiro.integration.dynatrace
+package com.projetos.appfinanceiro.integration.cielo
 
 import com.projetos.appfinanceiro.logging.LogLevel
 import com.projetos.appfinanceiro.logging.LogType
 import com.projetos.appfinanceiro.logging.Namespace
 
-data class DynatraceLog(
+data class CieloLog(
     val logType: LogType,
     val acronym: String,
     val level: LogLevel,
@@ -14,5 +14,5 @@ data class DynatraceLog(
     val content: String,
     val duration: Long? = null,
     val value: Double? = null,
-    val extra: ExtraInfo? = null
+    val extra: CieloExtraInfo? = null
 )

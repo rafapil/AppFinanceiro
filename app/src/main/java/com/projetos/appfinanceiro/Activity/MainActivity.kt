@@ -10,9 +10,9 @@ import com.dynatrace.android.agent.Dynatrace
 import com.projetos.appfinanceiro.Adapter.ExpenseListAdapter
 import com.projetos.appfinanceiro.ViewModel.MainViewModel
 import com.projetos.appfinanceiro.databinding.ActivityMainBinding
-import com.projetos.appfinanceiro.integration.dynatrace.DynatraceLog
-import com.projetos.appfinanceiro.integration.dynatrace.DynatraceLogger
-import com.projetos.appfinanceiro.integration.dynatrace.ExtraInfo
+import com.projetos.appfinanceiro.integration.cielo.CieloLog
+import com.projetos.appfinanceiro.integration.cielo.CieloExtraInfo
+import com.projetos.appfinanceiro.integration.cielo.CieloLogExporter
 import com.projetos.appfinanceiro.logging.LogLevel
 import com.projetos.appfinanceiro.logging.LogType
 import com.projetos.appfinanceiro.logging.Namespace
@@ -39,7 +39,6 @@ class MainActivity : AppCompatActivity() {
                 throw IllegalStateException("Erro forçado para teste")
             } catch (e: Exception) {
                 sendDataLogError(e)
-                Dynatrace.reportError("Falha ao carregar tela", e)
             }
         }
 
@@ -66,8 +65,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sendDataLog() {
-        DynatraceLogger.log(
-            DynatraceLog(
+        CieloLogExporter.log(
+            CieloLog(
                 logType = LogType.TBS,
                 acronym = "xpto",
                 level = LogLevel.WARN,
@@ -77,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                 content = "Falha ao buscar saldo",
                 duration = 617,
                 value = 250.99,
-                extra = ExtraInfo(
+                extra = CieloExtraInfo(
                     userId = "user-001",
                     transactionId = "txn-987654",
                     statusCode = 404,
@@ -91,8 +90,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun sendDataLogError(error: Exception) {
         val stackErrorString: List<String> = error.stackTrace.map { it.toString() }
-        DynatraceLogger.log(
-            DynatraceLog(
+        CieloLogExporter.log(
+            CieloLog(
                 logType = LogType.TBS,
                 acronym = "xpto",
                 level = LogLevel.ERROR,
@@ -102,7 +101,7 @@ class MainActivity : AppCompatActivity() {
                 content = "Falha ao buscar saldo",
                 duration = 617,
                 value = 250.99,
-                extra = ExtraInfo(
+                extra = CieloExtraInfo(
                     userId = "user-001",
                     transactionId = "txn-987654",
                     statusCode = 404,

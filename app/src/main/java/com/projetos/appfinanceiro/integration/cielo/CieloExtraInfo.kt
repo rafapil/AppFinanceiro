@@ -1,6 +1,6 @@
-package com.projetos.appfinanceiro.integration.dynatrace
+package com.projetos.appfinanceiro.integration.cielo
 
-data class ExtraInfo(
+data class CieloExtraInfo(
     val userId: String? = null,
     val transactionId: String? = null,
     val statusCode: Int? = null,
