@@ -8,7 +8,8 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager  
 import com.projetos.appfinanceiro.Adapter.ReportListAdapter  
 import com.projetos.appfinanceiro.ViewModel.MainViewModel  
-import com.projetos.appfinanceiro.databinding.ActivityReportBinding  
+import com.projetos.appfinanceiro.databinding.ActivityReportBinding
+import com.projetos.appfinanceiro.integration.otel.TraceHelper
 
 class ReportActivity : AppCompatActivity() { 
 
@@ -16,16 +17,29 @@ class ReportActivity : AppCompatActivity() {
     private val mainViewModel: MainViewModel by viewModels() 
 
     override fun onCreate(savedInstanceState: Bundle?) { 
-        super.onCreate(savedInstanceState) 
+        super.onCreate(savedInstanceState)
 
-        binding = ActivityReportBinding.inflate(layoutInflater) 
-        setContentView(binding.root) 
+        val span = TraceHelper.createChildSpanFromIntent(
+            intent,
+            spanName = "ReportActivity: onCreate",
+            additionalAttributes = mapOf("screen" to "ReportActivity")
+        )
 
-        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS) 
+        span?.makeCurrent().use {
+            // lógica da activity aqui
+            binding = ActivityReportBinding.inflate(layoutInflater)
+            setContentView(binding.root)
 
-        initRecyclerView() 
-        setVariable() 
-        observeData() 
+            window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+
+            initRecyclerView()
+            setVariable()
+            observeData()
+        }
+
+        span?.end()
+
+
     }
 
     private fun setVariable() { 

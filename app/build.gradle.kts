@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
 
     id("kotlin-parcelize")
+
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0"
 }
 
 android {
@@ -40,6 +42,7 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    ndkVersion = "27.2.12479018"
 }
 
 dependencies {
@@ -55,7 +58,24 @@ dependencies {
     implementation(libs.circularprogressbar)
     implementation(libs.glide)
 
-    // incluir essa dependencia para o oneAgent funcionar
-    implementation("com.dynatrace.agent:agent-android:8.+")
+    implementation(libs.okhttp)
+    implementation(libs.kotlinx.coroutines)
+    implementation(libs.lifecycle.runtime)
+    implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.dynatrace.agent)
+    /*
+    * config para opentelemetry
+    * */
+    implementation (platform("io.opentelemetry:opentelemetry-bom:1.25.0"))
+    implementation ("io.opentelemetry:opentelemetry-context")
+    implementation ("io.opentelemetry:opentelemetry-api")
+    implementation ("io.opentelemetry:opentelemetry-exporter-otlp:1.24.0")
+    implementation ("io.opentelemetry:opentelemetry-exporter-logging")
+    implementation ("io.opentelemetry:opentelemetry-extension-kotlin")
+    implementation ("io.opentelemetry:opentelemetry-sdk")
+    implementation ("io.opentelemetry:opentelemetry-semconv")
+
+//    implementation ("io.opentelemetry.instrumentation:opentelemetry-okhttp-3.0:1.28.0-alpha")
 
 }

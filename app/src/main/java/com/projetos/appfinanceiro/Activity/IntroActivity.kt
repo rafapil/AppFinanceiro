@@ -1,11 +1,13 @@
 package com.projetos.appfinanceiro.Activity
 
-import android.content.Intent 
+import android.content.Intent
 import android.os.Bundle 
 import androidx.appcompat.app.AppCompatActivity
-import com.dynatrace.android.agent.Dynatrace
-import com.dynatrace.android.agent.conf.DynatraceConfigurationBuilder
-import com.projetos.appfinanceiro.databinding.ActivityIntroBinding 
+import com.projetos.appfinanceiro.databinding.ActivityIntroBinding
+import com.projetos.appfinanceiro.integration.dynatrace.DynatraceConfigRUM
+import com.projetos.appfinanceiro.integration.otel.GlobalExceptionInterceptor
+import com.projetos.appfinanceiro.integration.otel.OpenTelemetryUtil
+
 
 class IntroActivity : AppCompatActivity() {
 
@@ -13,12 +15,12 @@ class IntroActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        DynatraceConfigRUM.initialize(application)
+        // Add the following line to initialize OpenTelemetry.
+        OpenTelemetryUtil.init()
 
-        // esse ponto configura o oneAgent manualmente
-        Dynatrace.startup(this, DynatraceConfigurationBuilder("<apllicationId>", "<url de comunicação com a API do Dynatrace>")
-            // configuracoes adicionais
-            .withCrashReporting(true)
-            .buildConfiguration())
+        // initiazer global tracer error otel
+        GlobalExceptionInterceptor.initialize(application)
 
         binding = ActivityIntroBinding.inflate(layoutInflater)
         setContentView(binding.root)
