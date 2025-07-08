@@ -4,7 +4,7 @@ plugins {
 
     id("kotlin-parcelize")
 
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0-RC1"
 }
 
 android {
@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.projetos.appfinanceiro"
-        minSdk = 24
+        minSdk = 29
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.navigation.runtime.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,6 +77,13 @@ dependencies {
     implementation ("io.opentelemetry:opentelemetry-sdk")
     implementation ("io.opentelemetry:opentelemetry-semconv")
 
+    implementation("io.opentelemetry:opentelemetry-sdk-logs:1.36.0")
+    implementation("io.opentelemetry:opentelemetry-exporter-otlp-logs:1.26.0-alpha")
+
 //    implementation ("io.opentelemetry.instrumentation:opentelemetry-okhttp-3.0:1.28.0-alpha")
+
+    // dependencias para log em teste do opentelemetry
+//    implementation("io.opentelemetry.android:android-agent:0.11.0-alpha")
+
 
 }

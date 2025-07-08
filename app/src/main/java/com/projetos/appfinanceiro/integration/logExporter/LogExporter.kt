@@ -1,7 +1,7 @@
-package com.projetos.appfinanceiro.integration.cielo
+package com.projetos.appfinanceiro.integration.logExporter
 
+import com.projetos.appfinanceiro.Domain.model.Log
 import com.projetos.appfinanceiro.integration.config.NetworkingConstants
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -51,7 +51,7 @@ object CieloLogExporter {
     private val json = Json { encodeDefaults = false; ignoreUnknownKeys = true }
 
     // Canal com buffer ilimitado (pode trocar por BUFFERED ou conflated)
-    private val logChannel = Channel<CieloLog>(Channel.UNLIMITED)
+    private val logChannel = Channel<Log>(Channel.UNLIMITED)
 
     init {
         // Inicializa o consumo da fila assim que o app sobe
@@ -63,11 +63,12 @@ object CieloLogExporter {
     }
 
     //    fun log(log: CieloLog) {
-//        CoroutineScope(Dispatchers.IO).launch {
-//            logChannel.send(log)
-//        }
-//    }
-    fun log(log: CieloLog) {
+    //        CoroutineScope(Dispatchers.IO).launch {
+    //            logChannel.send(log)
+    //        }
+    //    }
+
+    fun log(log: Log) {
         CoroutineScope(Dispatchers.IO).launch {
             val enriched = enrichWithCurrentSpan(log)
             logChannel.send(enriched)
@@ -75,7 +76,7 @@ object CieloLogExporter {
     }
 
 
-    private suspend fun sendLogWithRetry(log: CieloLog, tentativas: Int = 3) {
+    private suspend fun sendLogWithRetry(log: Log, tentativas: Int = 3) {
         val logSerializable = LogSerializable(
             traceId = log.traceId,
             spanId = log.spanId,
@@ -102,7 +103,8 @@ object CieloLogExporter {
         )
 
         val requestBody = json.encodeToString(listOf(logSerializable))
-            .toRequestBody("application/json; charset=utf-8".toMediaType())
+            .toRequestBody()
+//            .toRequestBody("application/json; charset=utf-8".toMediaType())
 
         val request = Request.Builder()
             .url(API_URL)
@@ -132,15 +134,15 @@ object CieloLogExporter {
         salvarLogLocal(log)
     }
 
-    private fun salvarLogLocal(log: CieloLog) {
+    private fun salvarLogLocal(log: Log) {
         println("Fallback: salvando log local -> $log")
         // Aqui você pode salvar no SharedPreferences, SQLite, Room, arquivo etc.
     }
 
     /*
-    * Aqui faz o inriquecimento dos dados
+    * Aqui faz o inriquecimento dos dados caso o OTEL esteja ativo é possivel recuperar do contexto caso contrario pode ser definido ao enviar o log
     * */
-    private fun enrichWithCurrentSpan(log: CieloLog): CieloLog {
+    private fun enrichWithCurrentSpan(log: Log): Log {
         val currentSpan = io.opentelemetry.api.trace.Span.current()
         val context = currentSpan.spanContext
 
@@ -149,8 +151,6 @@ object CieloLogExporter {
         return log.copy(
             traceId = log.traceId ?: context.traceId,
             spanId = log.spanId ?: context.spanId,
-            parentId = log.parentId // OpenTelemetry não fornece `parentId` diretamente.
-            // Se necessário, você pode manter o valor existente ou estender para controlar manualmente
         )
     }
 

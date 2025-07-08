@@ -9,10 +9,10 @@ import com.dynatrace.android.agent.Dynatrace
 import com.projetos.appfinanceiro.Adapter.ExpenseListAdapter
 import com.projetos.appfinanceiro.ViewModel.MainViewModel
 import com.projetos.appfinanceiro.databinding.ActivityMainBinding
-import com.projetos.appfinanceiro.integration.cielo.CieloLog
-import com.projetos.appfinanceiro.integration.cielo.CieloExtraInfo
-import com.projetos.appfinanceiro.integration.cielo.CieloLogExporter
-import com.projetos.appfinanceiro.integration.otel.TraceHelper
+import com.projetos.appfinanceiro.Domain.model.Log
+import com.projetos.appfinanceiro.Domain.model.LogExtraInfo
+import com.projetos.appfinanceiro.integration.logExporter.CieloLogExporter
+import com.projetos.appfinanceiro.integration.otel.tracer.TraceHelper
 import com.projetos.appfinanceiro.logging.LogLevel
 import com.projetos.appfinanceiro.logging.LogType
 import com.projetos.appfinanceiro.logging.Namespace
@@ -53,6 +53,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun setVariable() {
         binding.cardBtn.setOnClickListener {
+
+//            startActivity(Intent(this, ReportActivity::class.java))
+
             TraceHelper.navigateWithSpan(
                 activity = this,
                 destination = ReportActivity::class.java,
@@ -76,7 +79,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun sendDataLog() {
         CieloLogExporter.log(
-            CieloLog(
+            Log(
                 logType = LogType.TBS,
                 acronym = "xpto",
                 level = LogLevel.INFO,
@@ -86,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                 content = "Navegando para relatorio [otel]",
                 duration = 617,
                 value = 250.99,
-                extra = CieloExtraInfo(
+                extra = LogExtraInfo(
                     userId = "user-001",
                     transactionId = "txn-987654",
                     statusCode = 404,
@@ -101,7 +104,7 @@ class MainActivity : AppCompatActivity() {
     private fun sendDataLogError(error: Exception) {
         val stackErrorString: List<String> = error.stackTrace.map { it.toString() }
         CieloLogExporter.log(
-            CieloLog(
+            Log(
                 logType = LogType.TBS,
                 acronym = "xpto",
                 level = LogLevel.ERROR,
@@ -111,7 +114,7 @@ class MainActivity : AppCompatActivity() {
                 content = "Falha ao buscar saldo",
                 duration = 617,
                 value = 250.99,
-                extra = CieloExtraInfo(
+                extra = LogExtraInfo(
                     userId = "user-001",
                     transactionId = "txn-987654",
                     statusCode = 404,

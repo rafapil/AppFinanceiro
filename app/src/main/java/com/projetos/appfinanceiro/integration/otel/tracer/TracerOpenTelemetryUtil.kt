@@ -1,4 +1,4 @@
-package com.projetos.appfinanceiro.integration.otel
+package com.projetos.appfinanceiro.integration.otel.tracer
 
 import com.projetos.appfinanceiro.integration.config.NetworkingConstants
 import io.opentelemetry.api.OpenTelemetry
@@ -8,18 +8,25 @@ import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator
 import io.opentelemetry.context.propagation.ContextPropagators
 import io.opentelemetry.exporter.logging.LoggingSpanExporter
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
-import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter
 import io.opentelemetry.sdk.OpenTelemetrySdk
 import io.opentelemetry.sdk.resources.Resource
 import io.opentelemetry.sdk.trace.SdkTracerProvider
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor
 import io.opentelemetry.semconv.resource.attributes.ResourceAttributes
+import java.util.concurrent.TimeUnit
 
-class OpenTelemetryUtil {
+class TracerOpenTelemetryUtil {
+
     companion object {
+
+        var sdkTracerProvider: SdkTracerProvider? = null
+            private set
+        private var tracer: Tracer? = null
+
         @JvmStatic
         fun init() {
+
             val otelResource = Resource.getDefault().merge(
                 Resource.create(
                     Attributes.of(
@@ -29,29 +36,16 @@ class OpenTelemetryUtil {
                 )
             )
 
-//             gRPC
 //            val sdkTracerProvider = SdkTracerProvider.builder()
-//                .addSpanProcessor(SimpleSpanProcessor.create(LoggingSpanExporter.create()))
-//                .addSpanProcessor(
-//                    BatchSpanProcessor.builder(
-//                        OtlpGrpcSpanExporter.builder()
-//                            .setEndpoint("https://{{URL_TOOL}}.live.dynatrace.com/api/v2/otlp")
-//                            .addHeader("Authorization", "Api-Token apiKey")
-//                            .build()
-//                    ).build()
-//                )
-//                .setResource(otelResource)
-//                .build()
-
-
-            // http
-            val sdkTracerProvider = SdkTracerProvider.builder()
+            sdkTracerProvider = SdkTracerProvider.builder()
                 .addSpanProcessor(SimpleSpanProcessor.create(LoggingSpanExporter.create()))
-                .addSpanProcessor(BatchSpanProcessor.builder(
-                    OtlpHttpSpanExporter.builder()
-                        .setEndpoint(NetworkingConstants.BASE_URL_TRACE)
-                        .addHeader("Authorization", "Api-Token ${NetworkingConstants.API_KEY}")
-                        .build()).build()
+                .addSpanProcessor(
+                    BatchSpanProcessor.builder(
+                        OtlpHttpSpanExporter.builder()
+                            .setEndpoint(NetworkingConstants.BASE_URL_TRACE)
+                            .addHeader("Authorization", "Api-Token ${NetworkingConstants.API_KEY}")
+                            .build()
+                    ).build()
                 )
                 .setResource(otelResource)
                 .build();
@@ -64,12 +58,18 @@ class OpenTelemetryUtil {
             tracer = openTelemetry.getTracer("android-tracer", "1.0.0")
         }
 
-        private var tracer: Tracer? = null
 
         @JvmStatic
         fun getTracer(): Tracer? {
             return tracer
         }
+
+        @JvmStatic
+        fun flush() {
+            val result = sdkTracerProvider?.forceFlush()
+            result?.join(10, TimeUnit.SECONDS) // Espera 10 segundos para o flush completar
+        }
+
     }
 
 }

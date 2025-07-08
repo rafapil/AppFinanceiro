@@ -1,16 +1,14 @@
-package com.projetos.appfinanceiro.integration.otel
+package com.projetos.appfinanceiro.integration.otel.tracer
 
 import android.app.Application
 import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.api.trace.Tracer
-import io.opentelemetry.api.trace.Span
-import com.projetos.appfinanceiro.integration.otel.OpenTelemetryUtil
 
 object GlobalExceptionInterceptor {
 
     fun initialize(application: Application) {
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
-            val tracer: Tracer = OpenTelemetryUtil.getTracer()!!
+            val tracer: Tracer = TracerOpenTelemetryUtil.getTracer()!!
             val span = tracer.spanBuilder("Uncaught Exception").startSpan()
             try {
                 span.makeCurrent().use {

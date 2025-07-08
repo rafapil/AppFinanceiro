@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.projetos.appfinanceiro.Adapter.ReportListAdapter  
 import com.projetos.appfinanceiro.ViewModel.MainViewModel  
 import com.projetos.appfinanceiro.databinding.ActivityReportBinding
-import com.projetos.appfinanceiro.integration.otel.TraceHelper
+import com.projetos.appfinanceiro.integration.otel.tracer.TraceHelper
 
 class ReportActivity : AppCompatActivity() { 
 

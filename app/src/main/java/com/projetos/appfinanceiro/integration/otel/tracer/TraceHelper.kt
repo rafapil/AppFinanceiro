@@ -1,4 +1,4 @@
-package com.projetos.appfinanceiro.integration.otel
+package com.projetos.appfinanceiro.integration.otel.tracer
 
 //package com.projetos.appfinanceiro.tracing
 
@@ -20,7 +20,7 @@ import io.opentelemetry.api.trace.StatusCode
 
 object TraceHelper {
 
-    private val tracer: Tracer by lazy { OpenTelemetryUtil.getTracer()!! }
+    private val tracer: Tracer by lazy { TracerOpenTelemetryUtil.getTracer()!! }
 
     /**
      * Executa uma função com span automático
@@ -91,7 +91,7 @@ object TraceHelper {
         destination: Class<*>,
         spanName: String
     ) {
-        val tracer = OpenTelemetryUtil.getTracer()!!
+        val tracer = TracerOpenTelemetryUtil.getTracer()!!
         val span = tracer.spanBuilder(spanName).startSpan()
         try {
             span.makeCurrent().use {
@@ -118,7 +118,7 @@ object TraceHelper {
         val spanId = intent.getStringExtra("spanId")
 
         return if (!traceId.isNullOrBlank() && !spanId.isNullOrBlank()) {
-            val tracer: Tracer = OpenTelemetryUtil.getTracer()!!
+            val tracer: Tracer = TracerOpenTelemetryUtil.getTracer()!!
             val parentSpanContext = SpanContext.createFromRemoteParent(
                 traceId,
                 spanId,

@@ -1,6 +1,6 @@
-package com.projetos.appfinanceiro.integration.cielo
+package com.projetos.appfinanceiro.Domain.model
 
-data class CieloExtraInfo(
+data class LogExtraInfo(
     val userId: String? = null,
     val transactionId: String? = null,
     val statusCode: Int? = null,
